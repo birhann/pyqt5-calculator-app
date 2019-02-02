@@ -3,7 +3,7 @@ from Ui_calculator import Ui_Form
 import time
 from operation import *
 import sys
-class Pencere(Ui_Form,QtWidgets.QWidget,islemler):
+class Calculator(Ui_Form,QtWidgets.QWidget,islemler):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
@@ -750,6 +750,6 @@ class Pencere(Ui_Form,QtWidgets.QWidget,islemler):
 
 
 app=QtWidgets.QApplication(sys.argv)
-window=Pencere()
+window=Calculator()
 window.show()
 sys.exit(app.exec_())
