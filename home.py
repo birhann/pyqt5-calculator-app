@@ -11,9 +11,11 @@ class Pencere(Ui_Form,QtWidgets.QWidget,islemler):
         self.operator_list=[]
         self.first_count_control=None
         self.result_operate=None
+        self.operation_history.setText("")
         self.two_count_control=0
         self.writing_area.setStyleSheet("")
         self.write()
+
 
     def closeEvent(self, QCloseEvent):
         self.reply= QtWidgets.QMessageBox.question(self,'Exit',
@@ -35,8 +37,9 @@ class Pencere(Ui_Form,QtWidgets.QWidget,islemler):
         self.nine.clicked.connect(self.whileclick)
         self.zero.clicked.connect(self.whileclick)
         self.clear_line.clicked.connect(self.whileclick)
-        self.clear_all.clicked.connect(self.whileclick)
+        self.clear_all.clicked.connect(self.clear)
         self.back.clicked.connect(self.whileclick)
+
 
         self.virgul.clicked.connect(self.whileclick)
         self.arti_eksi.clicked.connect(self.whileclick)
@@ -45,6 +48,8 @@ class Pencere(Ui_Form,QtWidgets.QWidget,islemler):
         self.cikarma.clicked.connect(self.operation)
         self.carpma.clicked.connect(self.operation)
         self.bolme.clicked.connect(self.operation)
+
+        self.esittir.clicked.connect(self.whileclick)
 
     def count_capaticy(self):
         if self.writing_area.styleSheet() == "":
@@ -206,8 +211,6 @@ class Pencere(Ui_Form,QtWidgets.QWidget,islemler):
                     self.toplama.setStyleSheet("background-color:None")
                 except:
                     self.toplama.setStyleSheet("QPushButton:pressed { background-color: #ffabab }")
-
-
 
         elif sender.text() == "-":
             if self.result_operate==self.writing_area.toPlainText():
@@ -392,15 +395,70 @@ class Pencere(Ui_Form,QtWidgets.QWidget,islemler):
                 except:
                     self.bolme.setStyleSheet("QPushButton:pressed { background-color: #ffabab }")
 
+    def clear2(self):
+        self.writing_area.clear()
+        self.operation_history.clear()
+        self.two_count_control = 0
+        self.first_count_control = None
+        self.operator_list.clear()
+        self.count_list.clear()
+        self.writing_area.setStyleSheet("font: None")
+        self.writing_area.setStyleSheet("")
 
+    def equal_settings(self):
+        if len(self.operator_list) == 1:
+            if self.operator_list[-1] == "+":
+                self.islem = islemler.toplama(self,(self.count_list[-1]),(self.writing_area.toPlainText()))
+                self.clear2()
+                return self.islem
+            if self.operator_list[-1] == "-":
+                self.islem = islemler.cikarma(self,(self.count_list[-1]),(self.writing_area.toPlainText()))
+                self.clear2()
+                return self.islem
+            if self.operator_list[-1] == "x":
+                self.islem = islemler.carpma(self,(self.count_list[-1]),(self.writing_area.toPlainText()))
+                self.clear2()
+                return self.islem
+            elif self.operator_list[-1] == "/":
+                self.islem = islemler.bolme(self,(self.count_list[-1]),(self.writing_area.toPlainText()))
+                self.clear2()
+                return self.islem
 
+        elif len(self.operator_list)>1:
+            if self.operator_list[-1] == "+":
+                self.islem = islemler.toplama(self,(self.result_operate),(self.writing_area.toPlainText()))
+                self.clear2()
+                return self.islem
+            elif self.operator_list[-1] == "-":
+                self.islem =islemler.cikarma(self,(self.result_operate),(self.writing_area.toPlainText()))
+                self.clear2()
+                return self.islem
+            elif self.operator_list[-1] == "x":
+                self.islem = islemler.carpma(self,(self.result_operate),(self.writing_area.toPlainText()))
+                self.clear2()
+                return self.islem
+            elif self.operator_list[-1] == "/":
+                self.islem =islemler.bolme(self,(self.result_operate),(self.writing_area.toPlainText()))
+                self.clear2()
+                return self.islem
 
 
 
 
     def whileclick(self):
         sender=self.sender()
-        if sender.text()=="1":
+        if sender.text()=="=":
+            if len(self.operator_list)==1:
+                self.writing_area.insertPlainText(self.equal_settings())
+                self.result_operate=self.writing_area.toPlainText()
+            elif len(self.operator_list)>1:
+                if self.writing_area.toPlainText()!=self.result_operate:
+                    self.writing_area.insertPlainText(self.equal_settings())
+                    self.result_operate = self.writing_area.toPlainText()
+
+
+
+        elif sender.text()=="1":
             self.count_adding_control= self.count_capaticy()
             if self.count_adding_control==False:
                 if self.result_operate == str(self.writing_area.toPlainText()):
@@ -626,23 +684,6 @@ class Pencere(Ui_Form,QtWidgets.QWidget,islemler):
                 except:
                     self.writing_area.insertPlainText("0")
 
-
-
-
-
-
-        elif sender.text()=="C":
-            self.writing_area.clear()
-            self.operation_history.clear()
-            self.two_count_control=0
-            self.first_count_control=None
-            self.result_operate=None
-            self.operator_list.clear()
-            self.count_list.clear()
-            self.writing_area.setStyleSheet("font: None")
-            self.writing_area.setStyleSheet("")
-            self.writing_area.insertPlainText("0")
-
         elif sender.text()=="CE":
             self.writing_area.clear()
             self.writing_area.insertPlainText("0")
@@ -691,6 +732,18 @@ class Pencere(Ui_Form,QtWidgets.QWidget,islemler):
             else:
                 self.writing_area.clear()
                 self.writing_area.insertPlainText("-"+self.rakam)
+
+    def clear(self):
+        self.writing_area.clear()
+        self.operation_history.clear()
+        self.two_count_control = 0
+        self.first_count_control = None
+        self.result_operate = None
+        self.operator_list.clear()
+        self.count_list.clear()
+        self.writing_area.setStyleSheet("font: None")
+        self.writing_area.setStyleSheet("")
+        self.writing_area.insertPlainText("0")
 
 
 
